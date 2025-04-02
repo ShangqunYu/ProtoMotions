@@ -44,6 +44,8 @@ from protomotions.simulator.isaaclab.utils.robots import (
     SMPL_CFG,
     SMPLX_CFG,
     H1_CFG,
+    G1_CFG,
+    PRESTOE_BIPED_CFG,
 )
 
 
@@ -107,7 +109,7 @@ class SceneCfg(InteractiveSceneCfg):
                 prim_path="/World/envs/env_.*/Robot/bodies/.*",
                 filter_prim_paths_expr=[f"/World/objects/object_{i}" for i in range(0)],
             )
-        elif robot_type in ["h1", "g1"]:
+        elif robot_type in ["h1", "g1", "prestoe_biped"]:
             init_state = ArticulationCfg.InitialStateCfg(
                 pos=tuple(robot_config.init_state.pos),
                 joint_pos={
@@ -136,6 +138,10 @@ class SceneCfg(InteractiveSceneCfg):
                 )
             elif robot_type == "g1":
                 self.robot: ArticulationCfg = G1_CFG.replace(
+                    prim_path="/World/envs/env_.*/Robot", init_state=init_state, actuators=actuators
+                )
+            elif robot_type == "prestoe_biped":
+                self.robot: ArticulationCfg = PRESTOE_BIPED_CFG.replace(
                     prim_path="/World/envs/env_.*/Robot", init_state=init_state, actuators=actuators
                 )
             self.contact_sensor: ContactSensorCfg = ContactSensorCfg(

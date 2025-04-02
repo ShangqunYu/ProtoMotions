@@ -182,268 +182,268 @@ def main(
         files.sort()
 
         for filename in tqdm(files):
-            try:
-                relative_path_dir = filename.relative_to(data_dir).parent
-                outpath = (
-                    output_dir
-                    / relative_path_dir
-                    / filename.name.replace(".npz", ".npy")
-                    .replace(".pkl", ".npy")
-                    .replace("-", "_")
-                    .replace(" ", "_")
-                    .replace("(", "_")
-                    .replace(")", "_")
-                )
+            # try:
+            relative_path_dir = filename.relative_to(data_dir).parent
+            outpath = (
+                output_dir
+                / relative_path_dir
+                / filename.name.replace(".npz", ".npy")
+                .replace(".pkl", ".npy")
+                .replace("-", "_")
+                .replace(" ", "_")
+                .replace("(", "_")
+                .replace(")", "_")
+            )
 
-                # Check if the output file already exists
-                if not force_remake and outpath.exists():
-                    # print(f"Skipping {filename} as it already exists.")
-                    continue
+            # Check if the output file already exists
+            if not force_remake and outpath.exists():
+                # print(f"Skipping {filename} as it already exists.")
+                continue
 
-                # Create the output directory if it doesn't exist
-                os.makedirs(output_dir / relative_path_dir, exist_ok=True)
+            # Create the output directory if it doesn't exist
+            os.makedirs(output_dir / relative_path_dir, exist_ok=True)
 
-                print(f"Processing {filename}")
-                if filename.suffix == ".npz" and "samp" not in str(filename):
-                    motion_data = np.load(filename)
+            print(f"Processing {filename}")
+            if filename.suffix == ".npz" and "samp" not in str(filename):
+                motion_data = np.load(filename)
 
-                    betas = motion_data["betas"]
-                    gender = motion_data["gender"]
-                    amass_pose = motion_data["poses"]
-                    amass_trans = motion_data["trans"]
-                    if humanoid_type == "smplx":
-                        # Load the fps from the yaml file
-                        fps_yaml_path = Path("data/yaml_files/motion_fps_amassx.yaml")
-                        with open(fps_yaml_path, "r") as f:
-                            fps_dict = yaml.safe_load(f)
+                betas = motion_data["betas"]
+                gender = motion_data["gender"]
+                amass_pose = motion_data["poses"]
+                amass_trans = motion_data["trans"]
+                if humanoid_type == "smplx":
+                    # Load the fps from the yaml file
+                    fps_yaml_path = Path("data/yaml_files/motion_fps_amassx.yaml")
+                    with open(fps_yaml_path, "r") as f:
+                        fps_dict = yaml.safe_load(f)
 
-                        # Convert filename to match yaml format
-                        yaml_key = (
-                            folder_name
-                            + "/"
-                            + str(
-                                relative_path_dir
-                                / filename.name.replace(".npz", ".npy")
-                                .replace("-", "_")
-                                .replace(" ", "_")
-                                .replace("(", "_")
-                                .replace(")", "_")
-                            )
+                    # Convert filename to match yaml format
+                    yaml_key = (
+                        folder_name
+                        + "/"
+                        + str(
+                            relative_path_dir
+                            / filename.name.replace(".npz", ".npy")
+                            .replace("-", "_")
+                            .replace(" ", "_")
+                            .replace("(", "_")
+                            .replace(")", "_")
                         )
+                    )
 
-                        if yaml_key in fps_dict:
-                            mocap_fr = fps_dict[yaml_key]
-                        elif "mocap_framerate" in motion_data:
-                            mocap_fr = motion_data["mocap_framerate"]
-                        elif "mocap_frame_rate" in motion_data:
-                            mocap_fr = motion_data["mocap_frame_rate"]
-                        else:
-                            raise Exception(f"FPS not found for {yaml_key}")
+                    if yaml_key in fps_dict:
+                        mocap_fr = fps_dict[yaml_key]
+                    elif "mocap_framerate" in motion_data:
+                        mocap_fr = motion_data["mocap_framerate"]
+                    elif "mocap_frame_rate" in motion_data:
+                        mocap_fr = motion_data["mocap_frame_rate"]
                     else:
-                        if "mocap_framerate" in motion_data:
-                            mocap_fr = motion_data["mocap_framerate"]
-                        else:
-                            mocap_fr = motion_data["mocap_frame_rate"]
-                elif filename.suffix == ".pkl" and "samp" in str(filename):
-                    with open(filename, "rb") as f:
-                        motion_data = pickle.load(
-                            f, encoding="latin1"
-                        )  # np.load(filename)
-
-                    betas = motion_data["shape_est_betas"][:10]
-                    gender = "neutral"  # motion_data["gender"]
-                    amass_pose = motion_data["pose_est_fullposes"]
-                    amass_trans = motion_data["pose_est_trans"]
-                    mocap_fr = motion_data["mocap_framerate"]
+                        raise Exception(f"FPS not found for {yaml_key}")
                 else:
-                    print(f"Skipping {filename} as it is not a valid file")
-                    continue
+                    if "mocap_framerate" in motion_data:
+                        mocap_fr = motion_data["mocap_framerate"]
+                    else:
+                        mocap_fr = motion_data["mocap_frame_rate"]
+            elif filename.suffix == ".pkl" and "samp" in str(filename):
+                with open(filename, "rb") as f:
+                    motion_data = pickle.load(
+                        f, encoding="latin1"
+                    )  # np.load(filename)
 
-                pose_aa = torch.tensor(amass_pose)
-                amass_trans = torch.tensor(amass_trans)
-                betas = torch.from_numpy(betas)
+                betas = motion_data["shape_est_betas"][:10]
+                gender = "neutral"  # motion_data["gender"]
+                amass_pose = motion_data["pose_est_fullposes"]
+                amass_trans = motion_data["pose_est_trans"]
+                mocap_fr = motion_data["mocap_framerate"]
+            else:
+                print(f"Skipping {filename} as it is not a valid file")
+                continue
 
-                if force_neutral_body:
-                    betas[:] = 0
-                    gender = "neutral"
+            pose_aa = torch.tensor(amass_pose)
+            amass_trans = torch.tensor(amass_trans)
+            betas = torch.from_numpy(betas)
 
-                motion_data = {
-                    "pose_aa": pose_aa.numpy(),
-                    "trans": amass_trans.numpy(),
-                    "beta": betas.numpy(),
-                    "gender": gender,
-                }
+            if force_neutral_body:
+                betas[:] = 0
+                gender = "neutral"
 
-                smpl_2_mujoco = [
-                    joint_names.index(q) for q in mujoco_joint_names if q in joint_names
-                ]
-                batch_size = motion_data["pose_aa"].shape[0]
+            motion_data = {
+                "pose_aa": pose_aa.numpy(),
+                "trans": amass_trans.numpy(),
+                "beta": betas.numpy(),
+                "gender": gender,
+            }
 
-                if humanoid_type == "smpl":
-                    pose_aa = np.concatenate(
-                        [motion_data["pose_aa"][:, :66], np.zeros((batch_size, 6))],
-                        axis=1,
-                    )  # TODO: need to extract correct handle rotations instead of zero
-                    pose_aa_mj = pose_aa.reshape(batch_size, 24, 3)[:, smpl_2_mujoco]
-                    pose_quat = (
-                        sRot.from_rotvec(pose_aa_mj.reshape(-1, 3))
-                        .as_quat()
-                        .reshape(batch_size, 24, 4)
-                    )
-                else:
-                    pose_aa = np.concatenate(
-                        [
-                            motion_data["pose_aa"][:, :66],
-                            motion_data["pose_aa"][:, 75:],
-                        ],
-                        axis=-1,
-                    )
-                    pose_aa_mj = pose_aa.reshape(batch_size, 52, 3)[:, smpl_2_mujoco]
-                    pose_quat = (
-                        sRot.from_rotvec(pose_aa_mj.reshape(-1, 3))
-                        .as_quat()
-                        .reshape(batch_size, 52, 4)
-                    )
+            smpl_2_mujoco = [
+                joint_names.index(q) for q in mujoco_joint_names if q in joint_names
+            ]
+            batch_size = motion_data["pose_aa"].shape[0]
 
-                if isinstance(gender, np.ndarray):
-                    gender = gender.item()
-
-                if isinstance(gender, bytes):
-                    gender = gender.decode("utf-8")
-                if gender == "neutral":
-                    gender_number = [0]
-                elif gender == "male":
-                    gender_number = [1]
-                elif gender == "female":
-                    gender_number = [2]
-                else:
-                    ipdb.set_trace()
-                    raise Exception("Gender Not Supported!!")
-
-                if skeleton_tree is None:
-                    smpl_local_robot.load_from_skeleton(
-                        betas=betas[None,], gender=gender_number, objs_info=None
-                    )
-                    smpl_local_robot.write_xml(
-                        f"{TMP_SMPL_DIR}/smpl_humanoid_{uuid_str}.xml"
-                    )
-                    skeleton_tree = SkeletonTree.from_mjcf(
-                        f"{TMP_SMPL_DIR}/smpl_humanoid_{uuid_str}.xml"
-                    )
-
-                root_trans_offset = (
-                    torch.from_numpy(motion_data["trans"])
-                    + skeleton_tree.local_translation[0]
+            if humanoid_type == "smpl":
+                pose_aa = np.concatenate(
+                    [motion_data["pose_aa"][:, :66], np.zeros((batch_size, 6))],
+                    axis=1,
+                )  # TODO: need to extract correct handle rotations instead of zero
+                pose_aa_mj = pose_aa.reshape(batch_size, 24, 3)[:, smpl_2_mujoco]
+                pose_quat = (
+                    sRot.from_rotvec(pose_aa_mj.reshape(-1, 3))
+                    .as_quat()
+                    .reshape(batch_size, 24, 4)
+                )
+            else:
+                pose_aa = np.concatenate(
+                    [
+                        motion_data["pose_aa"][:, :66],
+                        motion_data["pose_aa"][:, 75:],
+                    ],
+                    axis=-1,
+                )
+                pose_aa_mj = pose_aa.reshape(batch_size, 52, 3)[:, smpl_2_mujoco]
+                pose_quat = (
+                    sRot.from_rotvec(pose_aa_mj.reshape(-1, 3))
+                    .as_quat()
+                    .reshape(batch_size, 52, 4)
                 )
 
-                sk_state = SkeletonState.from_rotation_and_root_translation(
-                    skeleton_tree,  # This is the wrong skeleton tree (location wise) here, but it's fine since we only use the parent relationship here.
-                    torch.from_numpy(pose_quat),
-                    root_trans_offset,
-                    is_local=True,
+            if isinstance(gender, np.ndarray):
+                gender = gender.item()
+
+            if isinstance(gender, bytes):
+                gender = gender.decode("utf-8")
+            if gender == "neutral":
+                gender_number = [0]
+            elif gender == "male":
+                gender_number = [1]
+            elif gender == "female":
+                gender_number = [2]
+            else:
+                ipdb.set_trace()
+                raise Exception("Gender Not Supported!!")
+
+            if skeleton_tree is None:
+                smpl_local_robot.load_from_skeleton(
+                    betas=betas[None,], gender=gender_number, objs_info=None
+                )
+                smpl_local_robot.write_xml(
+                    f"{TMP_SMPL_DIR}/smpl_humanoid_{uuid_str}.xml"
+                )
+                skeleton_tree = SkeletonTree.from_mjcf(
+                    f"{TMP_SMPL_DIR}/smpl_humanoid_{uuid_str}.xml"
                 )
 
-                if generate_flipped:
-                    formats = ["regular", "flipped"]
-                else:
-                    formats = ["regular"]
+            root_trans_offset = (
+                torch.from_numpy(motion_data["trans"])
+                + skeleton_tree.local_translation[0]
+            )
 
-                for format in formats:
-                    if robot_cfg["upright_start"]:
-                        B = pose_aa.shape[0]
-                        pose_quat_global = (
-                            (
-                                sRot.from_quat(
-                                    sk_state.global_rotation.reshape(-1, 4).numpy()
-                                )
-                                * sRot.from_quat([0.5, 0.5, 0.5, 0.5]).inv()
+            sk_state = SkeletonState.from_rotation_and_root_translation(
+                skeleton_tree,  # This is the wrong skeleton tree (location wise) here, but it's fine since we only use the parent relationship here.
+                torch.from_numpy(pose_quat),
+                root_trans_offset,
+                is_local=True,
+            )
+
+            if generate_flipped:
+                formats = ["regular", "flipped"]
+            else:
+                formats = ["regular"]
+
+            for format in formats:
+                if robot_cfg["upright_start"]:
+                    B = pose_aa.shape[0]
+                    pose_quat_global = (
+                        (
+                            sRot.from_quat(
+                                sk_state.global_rotation.reshape(-1, 4).numpy()
                             )
-                            .as_quat()
-                            .reshape(B, -1, 4)
+                            * sRot.from_quat([0.5, 0.5, 0.5, 0.5]).inv()
                         )
-                    else:
-                        pose_quat_global = sk_state.global_rotation.numpy()
+                        .as_quat()
+                        .reshape(B, -1, 4)
+                    )
+                else:
+                    pose_quat_global = sk_state.global_rotation.numpy()
 
-                    trans = root_trans_offset.clone()
-                    if format == "flipped":
-                        pose_quat_global = pose_quat_global[:, left_to_right_index]
-                        pose_quat_global[..., 0] *= -1
-                        pose_quat_global[..., 2] *= -1
-                        trans[..., 1] *= -1
+                trans = root_trans_offset.clone()
+                if format == "flipped":
+                    pose_quat_global = pose_quat_global[:, left_to_right_index]
+                    pose_quat_global[..., 0] *= -1
+                    pose_quat_global[..., 2] *= -1
+                    trans[..., 1] *= -1
 
-                    if "samp" in str(filename):
-                        samp_offset = torch.tensor(samp_root_offsets[filename.stem])
-                        trans[:, :2] -= trans[0, :2].clone()
-                        trans[:, :2] += samp_offset
+                if "samp" in str(filename):
+                    samp_offset = torch.tensor(samp_root_offsets[filename.stem])
+                    trans[:, :2] -= trans[0, :2].clone()
+                    trans[:, :2] += samp_offset
 
+                new_sk_state = SkeletonState.from_rotation_and_root_translation(
+                    skeleton_tree,
+                    torch.from_numpy(pose_quat_global),
+                    trans,
+                    is_local=False,
+                )
+
+                new_sk_motion = SkeletonMotion.from_skeleton_state(
+                    new_sk_state, fps=mocap_fr
+                )
+
+                if force_retarget:
+                    from data.scripts.retargeting.mink_retarget import (
+                        retarget_motion,
+                    )
+
+                    print("Force retargeting motion using mink retargeter...")
+                    # Convert to 30 fps to speedup Mink retargeting
+                    skip = int(mocap_fr // 30)
                     new_sk_state = SkeletonState.from_rotation_and_root_translation(
                         skeleton_tree,
-                        torch.from_numpy(pose_quat_global),
-                        trans,
+                        torch.from_numpy(pose_quat_global[::skip]),
+                        trans[::skip],
                         is_local=False,
                     )
-
                     new_sk_motion = SkeletonMotion.from_skeleton_state(
-                        new_sk_state, fps=mocap_fr
+                        new_sk_state, fps=30
                     )
 
-                    if force_retarget:
-                        from data.scripts.retargeting.mink_retarget import (
-                            retarget_motion,
-                        )
-
-                        print("Force retargeting motion using mink retargeter...")
-                        # Convert to 30 fps to speedup Mink retargeting
-                        skip = int(mocap_fr // 30)
-                        new_sk_state = SkeletonState.from_rotation_and_root_translation(
-                            skeleton_tree,
-                            torch.from_numpy(pose_quat_global[::skip]),
-                            trans[::skip],
-                            is_local=False,
-                        )
-                        new_sk_motion = SkeletonMotion.from_skeleton_state(
-                            new_sk_state, fps=30
-                        )
-
-                        if robot_type in ["smpl", "smplx", "smplh"]:
-                            robot_type = f"{robot_type}_humanoid"
-                        new_sk_motion = retarget_motion(
-                            motion=new_sk_motion, robot_type=robot_type, render=False
-                        )
-
-                    if format == "flipped":
-                        outpath = outpath.with_name(
-                            outpath.stem + "_flipped" + outpath.suffix
-                        )
-                    print(f"Saving to {outpath}")
-                    if robot_type in ["h1", "g1"]:
-                        torch.save(new_sk_motion, str(outpath))
-                    else:
-                        new_sk_motion.to_file(str(outpath))
-
-                    processed_files += 1
-                    elapsed_time = time.time() - start_time
-                    avg_time_per_file = elapsed_time / processed_files
-                    remaining_files = total_files_to_process - processed_files
-                    estimated_time_remaining = avg_time_per_file * remaining_files
-
-                    print(
-                        f"\nProgress: {processed_files}/{total_files_to_process} files"
+                    if robot_type in ["smpl", "smplx", "smplh"]:
+                        robot_type = f"{robot_type}_humanoid"
+                    new_sk_motion = retarget_motion(
+                        motion=new_sk_motion, robot_type=robot_type, render=True
                     )
-                    print(
-                        f"Average time per file: {timedelta(seconds=int(avg_time_per_file))}"
+
+                if format == "flipped":
+                    outpath = outpath.with_name(
+                        outpath.stem + "_flipped" + outpath.suffix
                     )
-                    print(
-                        f"Estimated time remaining: {timedelta(seconds=int(estimated_time_remaining))}"
-                    )
-                    print(
-                        f"Estimated completion time: {time.strftime('%H:%M:%S', time.localtime(time.time() + estimated_time_remaining))}\n"
-                    )
-            except Exception as e:
-                print(f"Error processing {filename}")
-                print(f"Error: {e}")
-                print(f"Line: {e.__traceback__.tb_lineno}")
-                continue
+                print(f"Saving to {outpath}")
+                if robot_type in ["h1", "g1" , "prestoe_biped"]:
+                    torch.save(new_sk_motion, str(outpath))
+                else:
+                    new_sk_motion.to_file(str(outpath))
+
+                processed_files += 1
+                elapsed_time = time.time() - start_time
+                avg_time_per_file = elapsed_time / processed_files
+                remaining_files = total_files_to_process - processed_files
+                estimated_time_remaining = avg_time_per_file * remaining_files
+
+                print(
+                    f"\nProgress: {processed_files}/{total_files_to_process} files"
+                )
+                print(
+                    f"Average time per file: {timedelta(seconds=int(avg_time_per_file))}"
+                )
+                print(
+                    f"Estimated time remaining: {timedelta(seconds=int(estimated_time_remaining))}"
+                )
+                print(
+                    f"Estimated completion time: {time.strftime('%H:%M:%S', time.localtime(time.time() + estimated_time_remaining))}\n"
+                )
+            # except Exception as e:
+            #     print(f"Error processing {filename}")
+            #     print(f"Error: {e}")
+            #     print(f"Line: {e.__traceback__.tb_lineno}")
+            #     continue
 
 
 if __name__ == "__main__":

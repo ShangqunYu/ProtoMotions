@@ -50,6 +50,8 @@ asset_descriptors = [
     AssetDesc("smplx_humanoid.xml", "mjcf", False),
     AssetDesc("smplx_humanoid_with_limits.xml", "mjcf", False),
     AssetDesc("smpl_humanoid_motivo.xml", "mjcf", False),
+    AssetDesc("g1.urdf", "urdf", False),
+    AssetDesc("prestoe_biped.urdf", "urdf", False),
 ]
 
 
@@ -245,6 +247,11 @@ ANIM_FINISHED = 4
 # initialize animation state
 anim_state = ANIM_FINISHED
 current_dof = -1
+
+print("num_bodies = %d" % gym.get_asset_rigid_body_count(asset))
+print("body_names = %s" % gym.get_asset_rigid_body_names(asset))
+print("num_dofs = %d" % num_dofs)
+print("dof_names = %s" % dof_names)
 
 while not gym.query_viewer_has_closed(viewer):
 

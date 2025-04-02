@@ -133,6 +133,38 @@ def g1_mapping():
         smpl_pose_modifier=smpl_pose_modifier,
         asset_file=asset_file,
     )
+    
+    
+def prestoe_biped_mapping():
+    #### Config for extension
+    extend_config = [
+
+    ]
+
+    base_link = "torso_link"
+    joint_matches = [
+        ["pelvis", "Pelvis"],
+        ["L_hipyaw_link", "L_Hip"],
+        ["L_shank_link", "L_Knee"],
+        ["L_ankle_link", "L_Ankle"],
+        ["R_hipyaw_link", "R_Hip"],
+        ["R_shank_link", "R_Knee"],
+        ["R_ankle_link", "R_Ankle"],
+    ]
+
+    smpl_pose_modifier = [
+        {"Pelvis": "[np.pi/2, 0, np.pi/2]"}
+    ]
+
+    asset_file = "protomotions/data/assets/mjcf/prestoe_biped.xml"
+
+    return EasyDict(
+        extend_config=extend_config,
+        base_link=base_link,
+        joint_matches=joint_matches,
+        smpl_pose_modifier=smpl_pose_modifier,
+        asset_file=asset_file,
+    )
 
 
 def h1_no_head_mapping():
@@ -312,5 +344,7 @@ def get_config(humanoid_type: str):
         return smplx_with_limits_mapping()
     elif humanoid_type == "g1":
         return g1_mapping()
+    elif humanoid_type == "prestoe_biped":
+        return prestoe_biped_mapping()
     else:
         raise NotImplementedError

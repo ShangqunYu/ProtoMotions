@@ -82,11 +82,12 @@ class BaseEnv:
             device=self.device,
             **kwargs
         )
+        print("1")
         self.simulator.on_environment_ready()
         self.default_state = self.simulator.get_default_state()
 
         self.dt = self.simulator.dt
-
+        print("2")
         self.key_body_ids = self.simulator.build_body_ids_tensor(
             self.config.robot.key_bodies
         )
@@ -96,8 +97,9 @@ class BaseEnv:
         self.contact_body_ids = self.simulator.build_body_ids_tensor(
             self.config.robot.contact_bodies
         )
+        print("3")
         self.build_termination_heights()
-
+        print("4")
         self.state_init = self.StateInit[config.state_init]
         self.hybrid_init_prob = config.hybrid_init_prob
 
