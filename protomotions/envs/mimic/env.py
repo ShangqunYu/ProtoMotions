@@ -366,7 +366,6 @@ class Mimic(BaseEnv):
         ref_gv = ref_state.rigid_body_vel
         ref_gav = ref_state.rigid_body_ang_vel
         ref_dv = ref_state.dof_vel
-
         ref_lr = ref_lr[:, self.simulator.get_dof_body_ids()]
         ref_kb = self.process_kb(ref_gt, ref_gr)
 

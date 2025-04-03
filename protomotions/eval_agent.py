@@ -108,7 +108,6 @@ def main(override_config: OmegaConf):
     fabric.launch()
 
     if simulator == "isaaclab":
-        breakpoint()
         app_launcher = AppLauncher({"headless": config.headless})
         simulation_app = app_launcher.app
         env = instantiate(

@@ -306,6 +306,7 @@ class BaseEnv:
         pass
 
     def post_physics_step(self):
+        
         self.progress_buf += 1
         self.self_obs_cb.post_physics_step()
 
