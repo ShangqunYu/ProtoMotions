@@ -138,7 +138,12 @@ def g1_mapping():
 def prestoe_biped_mapping():
     #### Config for extension
     extend_config = [
-
+        {
+            "joint_name": "head",
+            "parent_name": "torso_link",
+            "pos": [0.0, 0.0, 0.5],
+            "rot": [1.0, 0.0, 0.0, 0.0],
+        },
     ]
 
     base_link = "torso_link"
@@ -156,7 +161,7 @@ def prestoe_biped_mapping():
         {"Pelvis": "[np.pi/2, 0, np.pi/2]"}
     ]
 
-    asset_file = "protomotions/data/assets/mjcf/prestoe_biped.xml"
+    asset_file = "protomotions/data/assets/mjcf/prestoe_biped_original.xml"
 
     return EasyDict(
         extend_config=extend_config,

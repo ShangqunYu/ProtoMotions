@@ -85,7 +85,7 @@ _G1_KEYPOINT_TO_JOINT = {
 
 _PRESTOE_BIPED_KEYPOINT_TO_JOINT = {
     "Pelvis": {"name": "pelvis", "weight": 1.0},
-    # "Head": {"name": "head", "weight": 1.0},
+    "Head": {"name": "head", "weight": 1.0},
     # Legs.
     "L_Hip": {"name": "L_hipyaw_link", "weight": 1.0},
     "R_Hip": {"name": "R_hipyaw_link", "weight": 1.0},
@@ -111,7 +111,7 @@ _KEYPOINT_TO_JOINT_MAP = {
 _RESCALE_FACTOR = {
     "h1": np.array([1.0, 1.0, 1.1]),
     "g1": np.array([0.75, 1.0, 0.8]),
-    "prestoe_biped": np.array([1.0, 1.0, 1.0]),
+    "prestoe_biped": np.array([0.9, 1.0, 0.9]),
 }
 
 _OFFSET = {
@@ -121,7 +121,7 @@ _OFFSET = {
 _ROOT_LINK = {
     "h1": "pelvis",
     "g1": "pelvis",
-    "prestoe_biped": "pelvis",
+    "prestoe_biped": "torso_link",
 }
 
 _H1_VELOCITY_LIMITS = {
@@ -329,6 +329,7 @@ def create_robot_motion(
     from data.scripts.retargeting.config import get_config
 
     # Initialize H1 humanoid batch with config
+    breakpoint()
     cfg = get_config(robot_type)
     humanoid_batch = Humanoid_Batch(cfg)
 
@@ -374,7 +375,6 @@ def create_robot_motion(
 
     # Adjust global translations to match original heights
     fk_return_proper.global_translation[..., 2] -= height_offset
-
     curr_motion = {
         k: v.squeeze().detach().cpu() if torch.is_tensor(v) else v
         for k, v in fk_return_proper.items()
@@ -735,7 +735,7 @@ def manually_retarget_motion(
     )
     new_sk_motion = SkeletonMotion.from_skeleton_state(new_sk_state, fps=30)
     sk_motion = retarget_motion(new_sk_motion, robot_type, render=render)
-    if robot_type in ["h1", "g1"]:
+    if robot_type in ["h1", "g1", "prestoe_biped"]:
         torch.save(sk_motion, output_path)
     else:
         sk_motion.to_file(output_path)

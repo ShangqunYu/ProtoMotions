@@ -161,7 +161,6 @@ class Humanoid_Batch:
         local_rotation = []
         joints_range = []
         body_to_joint = OrderedDict()
-
         # recursively adding all nodes into the skel_tree
         def _add_xml_node(xml_node, parent_index, node_index):
             node_name = xml_node.attrib.get("name")
@@ -224,7 +223,6 @@ class Humanoid_Batch:
         pose = pose[
             ..., : len(self._parents), :
         ]  # H1 fitted joints might have extra joints
-
         if convert_to_mat:
             pose_quat = tRot.axis_angle_to_quaternion(pose.clone())
             pose_mat = tRot.quaternion_to_matrix(pose_quat)

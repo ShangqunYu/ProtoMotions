@@ -10,7 +10,7 @@
             "name": "Play_motion",
             "type": "debugpy",
             "request": "launch",
-            "program": "/home/simon/Repositories/RL_experiment/ProtoMotions/protomotions/eval_agent.py",
+            "program": "/home/simon/Repositories/ProtoMotions/protomotions/eval_agent.py",
             "console": "integratedTerminal",
             "args": [
                 "+base=[fabric,structure]", 
@@ -19,7 +19,7 @@
                 "+simulator=isaaclab",
                 "+checkpoint=null", 
                 "+training_max_steps=1",
-                "+motion_file=/home/simon/Repositories/RL_experiment/ProtoMotions/data/amass/Male1Walking_c3d-prestoe_biped_retargeted/Walk_B15___Walk_turn_around_stageii.npy", 
+                "+motion_file=/home/simon/Repositories/ProtoMotions/data/amass/01-prestoe_biped_retargeted/01_01_stageii.npy", 
                 "env.config.sync_motion=True", 
                 "ref_respawn_offset=0", 
                 "+headless=False", 

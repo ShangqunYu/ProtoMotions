@@ -4,7 +4,7 @@ defaults:
   - base
 
 robot:
-  body_names: ['torso_link', 'pelvis', 'R_hipyaw_link', 'R_hiproll_link', 'R_hippitch_link', 'R_shank_link', 'R_ankle_link', 'R_foot_link', 'R_toe_link', 'L_hipyaw_link', 'L_hiproll_link', 'L_hippitch_link', 'L_shank_link', 'L_ankle_link', 'L_foot_link', 'L_toe_link']
+  body_names: ['torso_link', 'head', 'pelvis', 'R_hipyaw_link', 'R_hiproll_link', 'R_hippitch_link', 'R_shank_link', 'R_ankle_link', 'R_foot_link', 'R_toe_link', 'L_hipyaw_link', 'L_hiproll_link', 'L_hippitch_link', 'L_shank_link', 'L_ankle_link', 'L_foot_link', 'L_toe_link']
   dof_names: ['torsoyaw', 'R_hipyaw', 'R_hiproll', 'R_hippitch', 'R_knee', 'R_anklepitch', 'R_ankleroll', 'R_toepitch', 'L_hipyaw', 'L_hiproll', 'L_hippitch', 'L_knee', 'L_anklepitch', 'L_ankleroll', 'L_toepitch']
 
   trackable_bodies_subset: ['pelvis', 'head', 'left_ankle_link', 'right_ankle_link']
@@ -12,7 +12,7 @@ robot:
   # Observation parameters
   dof_obs_size: ${eval:${len:${.dof_body_ids}}*6}
   number_of_actions: 15
-  self_obs_max_coords_size: 238  # ${eval:1+33*(3+6+3+3)-3}
+  self_obs_max_coords_size: 253  # ${eval:1+33*(3+6+3+3)-3}
 
   # Control parameters
   dof_body_ids: [ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15]
@@ -25,7 +25,7 @@ robot:
   non_termination_contact_bodies: ['torso_link', 'pelvis', 'R_hipyaw_link', 'R_hiproll_link', 'R_hippitch_link', 'R_shank_link', 'R_ankle_link', 'R_foot_link', 'R_toe_link', 'L_hipyaw_link', 'L_hiproll_link', 'L_hippitch_link', 'L_shank_link', 'L_ankle_link', 'L_foot_link', 'L_toe_link']
   right_foot_name: "R_foot_link"
   left_foot_name: "L_foot_link"
-  head_body_name: "torso_link"
+  head_body_name: "head"
 
   init_state:
     pos: [0.0, 0.0, 0.8] # x,y,z [m]

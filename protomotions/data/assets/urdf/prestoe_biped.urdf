@@ -453,4 +453,18 @@
             </geometry>
         </collision>
     </link>
+
+  <link name="head">
+    <visual>
+      <geometry>
+        <sphere radius="0.0001"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="head" type="fixed" dont_collapse="true">
+    <parent link="torso_link"/>
+    <child link="head"/>
+    <origin xyz="0 0 0.5" rpy="0 0 0"/>
+  </joint>
 </robot>
