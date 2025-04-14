@@ -10,7 +10,7 @@
             "name": "Play_motion",
             "type": "debugpy",
             "request": "launch",
-            "program": "/home/simon/Repositories/ProtoMotions/protomotions/eval_agent.py",
+            "program": "/home/simon/Repositories/RL_experiment/ProtoMotions/protomotions/eval_agent.py",
             "console": "integratedTerminal",
             "args": [
                 "+base=[fabric,structure]", 
@@ -19,14 +19,31 @@
                 "+simulator=isaaclab",
                 "+checkpoint=null", 
                 "+training_max_steps=1",
-                "+motion_file=/home/simon/Repositories/ProtoMotions/data/amass/01-prestoe_biped_retargeted/01_01_stageii.npy", 
+                "+motion_file=/home/simon/Repositories/RL_experiment/ProtoMotions/data/amass/01-prestoe_biped_retargeted/01_01_stageii.npy", 
                 "env.config.sync_motion=True", 
                 "ref_respawn_offset=0", 
                 "+headless=False", 
                 "num_envs=1",  
                 "+experiment_name=debug"
             ]
+        },
+
+        {
+            "python": "/home/simon/miniconda3/envs/env_isaaclab/bin/python",
+            "name": "eval_h1",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "/home/simon/Repositories/RL_experiment/ProtoMotions/protomotions/eval_agent.py",
+            "console": "integratedTerminal",
+            "args": [
+                "+robot=h1",
+                "+simulator=isaaclab",
+                "+motion_file=data/motions/h1_walk.npy", 
+                "+checkpoint=results/h1_walk/last.ckpt", 
+            ]
         }
+
+
     ]
 }
 

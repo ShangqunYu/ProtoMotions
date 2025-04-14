@@ -8,5 +8,5 @@ rendered_images/*
 results/*
 .DS_Store
 **/.DS_Store
-data/amass/*
+data/amass*
 data/smpl/*

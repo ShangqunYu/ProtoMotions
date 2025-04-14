@@ -187,9 +187,7 @@ class Simulator(ABC):
         """
         print("start process")
         self._process_dof_props()
-        print("a")
         body_ordering = self._get_sim_body_ordering()
-        print("b")
         body_convert_to_common = torch.tensor(
             [
                 body_ordering.body_names.index(body_name)
@@ -198,7 +196,6 @@ class Simulator(ABC):
             dtype=torch.long,
             device=self.device,
         )
-        print("c")
         body_convert_to_sim = torch.tensor(
             [
                 self.robot_config.body_names.index(body_name)
@@ -207,7 +204,6 @@ class Simulator(ABC):
             dtype=torch.long,
             device=self.device,
         )
-        print("d")
         contact_sensor_convert_to_common = torch.tensor(
             [
                 body_ordering.contact_sensor_body_names.index(body_name)
@@ -216,7 +212,6 @@ class Simulator(ABC):
             dtype=torch.long,
             device=self.device,
         )
-        print("e")
         dof_convert_to_sim = torch.tensor(
             [
                 self.robot_config.dof_names.index(dof_name)
@@ -234,7 +229,6 @@ class Simulator(ABC):
             dtype=torch.long,
             device=self.device,
         )
-        print("g")
         self.data_conversion = DataConversion(
             body_convert_to_common=body_convert_to_common,
             body_convert_to_sim=body_convert_to_sim,
@@ -243,11 +237,8 @@ class Simulator(ABC):
             dof_convert_to_common=dof_convert_to_common,
             sim_w_last=self.config.w_last,
         )
-        print("h")
         self._create_legged_robot_tensors()
-        print("i")
         self._dof_offsets_sim = self._compute_dof_offsets(body_ordering.dof_names)
-        print("j")
         self._sim_pd_action_offset, self._sim_pd_action_scale = (
             build_pd_action_offset_scale(
                 self._dof_offsets_sim,

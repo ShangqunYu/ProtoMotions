@@ -329,7 +329,6 @@ def create_robot_motion(
     from data.scripts.retargeting.config import get_config
 
     # Initialize H1 humanoid batch with config
-    breakpoint()
     cfg = get_config(robot_type)
     humanoid_batch = Humanoid_Batch(cfg)
 
