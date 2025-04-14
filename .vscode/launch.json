@@ -41,7 +41,58 @@
                 "+motion_file=data/motions/h1_walk.npy", 
                 "+checkpoint=results/h1_walk/last.ckpt", 
             ]
-        }
+        },
+
+        {
+            "python": "/home/simon/miniconda3/envs/env_isaaclab/bin/python",
+            "name": "train_h1_amp",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "/home/simon/Repositories/RL_experiment/ProtoMotions/protomotions/train_agent.py",
+            "console": "integratedTerminal",
+            "args": [
+                "+exp=amp_mlp",
+                "+motion_file=data/motions/h1_walk.npy", 
+                "+robot=h1",
+                "+simulator=isaaclab",
+                "experiment_name=h1_walk",
+                "+opt=wandb",
+                "num_envs=1024",
+                "env.config.enable_height_termination=true", 
+            ]
+        },
+        {
+            "python": "/home/simon/miniconda3/envs/env_isaaclab/bin/python",
+            "name": "train_prestoe_amp",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "/home/simon/Repositories/RL_experiment/ProtoMotions/protomotions/train_agent.py",
+            "console": "integratedTerminal",
+            "args": [
+                "+exp=amp_mlp",
+                "+motion_file=data/amass/Female1Walking_c3d-prestoe_biped_retargeted/B3___walk1_stageii.npy", 
+                "+robot=prestoe_biped",
+                "+simulator=isaaclab",
+                "experiment_name=prestoe_walk",
+                "+opt=wandb",
+                "num_envs=1024",
+                "env.config.enable_height_termination=true", 
+            ]
+        },
+        {
+            "python": "/home/simon/miniconda3/envs/env_isaaclab/bin/python",
+            "name": "eval_prestoe",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "/home/simon/Repositories/RL_experiment/ProtoMotions/protomotions/eval_agent.py",
+            "console": "integratedTerminal",
+            "args": [
+                "+robot=prestoe_biped",
+                "+simulator=isaaclab",
+                "+motion_file=data/amass/Female1Walking_c3d-prestoe_biped_retargeted/B3___walk1_stageii.npy", 
+                "+checkpoint=results/prestoe_walk/last.ckpt", 
+            ]
+        },
 
 
     ]

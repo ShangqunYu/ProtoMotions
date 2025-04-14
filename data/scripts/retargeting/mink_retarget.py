@@ -111,7 +111,7 @@ _KEYPOINT_TO_JOINT_MAP = {
 _RESCALE_FACTOR = {
     "h1": np.array([1.0, 1.0, 1.1]),
     "g1": np.array([0.75, 1.0, 0.8]),
-    "prestoe_biped": np.array([0.9, 1.0, 0.9]),
+    "prestoe_biped": np.array([0.85, 1.0, 0.9]),
 }
 
 _OFFSET = {
