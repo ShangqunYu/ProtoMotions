@@ -19,7 +19,31 @@
                 "+simulator=isaaclab",
                 "+checkpoint=null", 
                 "+training_max_steps=1",
-                "+motion_file=/home/simon/Repositories/RL_experiment/ProtoMotions/data/amass/01-prestoe_biped_retargeted/01_01_stageii.npy", 
+                "+motion_file=/home/simon/Repositories/RL_experiment/ProtoMotions/data/amass/02-prestoe_biped_retargeted/02_03_stageii.npy", 
+                "env.config.sync_motion=True", 
+                "ref_respawn_offset=0", 
+                "+headless=False", 
+                "num_envs=1",  
+                "+experiment_name=debug"
+            ]
+        },
+
+        {
+            "python": "/home/simon/miniconda3/envs/env_isaaclab/bin/python",
+            "name": "Play_h1_motion",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "/home/simon/Repositories/RL_experiment/ProtoMotions/protomotions/eval_agent.py",
+            "console": "integratedTerminal",
+            "args": [
+                "+base=[fabric,structure]", 
+                "+exp=deepmimic_mlp", 
+                "+robot=h1",
+                "+simulator=isaaclab",
+                "+checkpoint=null", 
+                "+training_max_steps=1",
+                // "+motion_file=/home/simon/Repositories/RL_experiment/ProtoMotions/data/amass/02-h1_retargeted/02_03_stageii.npy", 
+                "+motion_file=data/motions/h1_walk.npy",
                 "env.config.sync_motion=True", 
                 "ref_respawn_offset=0", 
                 "+headless=False", 
@@ -66,7 +90,7 @@
             "name": "train_prestoe_amp",
             "type": "debugpy",
             "request": "launch",
-            "program": "/home/simon/Repositories/ProtoMotions/protomotions/train_agent.py",
+            "program": "/home/simon/Repositories/RL_experiment/ProtoMotions/protomotions/train_agent.py",
             "console": "integratedTerminal",
             "args": [
                 "+exp=amp_mlp",
@@ -75,7 +99,7 @@
                 "+simulator=isaaclab",
                 "experiment_name=prestoe_walk",
                 "+opt=wandb",
-                "num_envs=1024",
+                "num_envs=2048",
                 "env.config.enable_height_termination=true", 
             ]
         },
@@ -84,7 +108,7 @@
             "name": "eval_prestoe",
             "type": "debugpy",
             "request": "launch",
-            "program": "/home/simon/Repositories/ProtoMotions/protomotions/eval_agent.py",
+            "program": "/home/simon/Repositories/RL_experiment/ProtoMotions/protomotions/eval_agent.py",
             "console": "integratedTerminal",
             "args": [
                 "+robot=prestoe_biped",
