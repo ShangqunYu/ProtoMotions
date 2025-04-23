@@ -23,7 +23,7 @@ robot:
   dof_joint_frictions: [0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03]
 
   key_bodies: [ "R_foot_link", "L_foot_link" ]
-  non_termination_contact_bodies: ['torso_link', 'pelvis', 'R_hipyaw_link', 'R_hiproll_link', 'R_hippitch_link', 'R_shank_link', 'R_ankle_link', 'R_foot_link', 'R_toe_link', 'L_hipyaw_link', 'L_hiproll_link', 'L_hippitch_link', 'L_shank_link', 'L_ankle_link', 'L_foot_link', 'L_toe_link']
+  non_termination_contact_bodies: ['R_ankle_link', 'R_foot_link', 'R_toe_link',  'L_ankle_link', 'L_foot_link', 'L_toe_link']
   right_foot_name: "R_foot_link"
   left_foot_name: "L_foot_link"
   head_body_name: "head"
@@ -101,7 +101,7 @@ robot:
     asset_file_name: "urdf/prestoe_biped.urdf"
     usd_asset_file_name: "usd/prestoe_biped.usd"
     robot_type: prestoe_biped
-    self_collisions: False
+    self_collisions: True
     default_dof_drive_mode: 3
 
   sim:
@@ -122,8 +122,9 @@ robot:
 motion_lib:
   _target_: protomotions.utils.motion_lib_h1.H1_MotionLib
 
-# Override simulation config to use the adapted H1 variant
+# Override simulation config to use the adapted Prestoe variant
 env:
   config:
     mimic_reset_track:
       grace_period: 10
+    enable_height_termination: True

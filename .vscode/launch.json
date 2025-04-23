@@ -19,7 +19,7 @@
                 "+simulator=isaaclab",
                 "+checkpoint=null", 
                 "+training_max_steps=1",
-                "+motion_file=/home/simon/Repositories/RL_experiment/ProtoMotions/data/amass/02-prestoe_biped_retargeted/02_03_stageii.npy", 
+                "+motion_file=/home/simon/Repositories/RL_experiment/ProtoMotions/data/amass/02-prestoe_biped_retargeted/02_01_stageii.npy", 
                 "env.config.sync_motion=True", 
                 "ref_respawn_offset=0", 
                 "+headless=False", 
