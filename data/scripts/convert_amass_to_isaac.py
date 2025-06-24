@@ -43,7 +43,7 @@ def main(
 ):
     if robot_type is None:
         robot_type = humanoid_type
-    elif robot_type in ["h1", "g1", "prestoe_biped"]:
+    elif robot_type in ["h1", "g1", "prestoe_biped", "prestoe"]:
         assert (
             force_retarget
         ), f"Data is either SMPL or SMPL-X. The {robot_type} robot must use the retargeting pipeline."
@@ -408,7 +408,7 @@ def main(
                     if robot_type in ["smpl", "smplx", "smplh"]:
                         robot_type = f"{robot_type}_humanoid"
                     new_sk_motion = retarget_motion(
-                        motion=new_sk_motion, robot_type=robot_type, render=False
+                        motion=new_sk_motion, robot_type=robot_type, render=True
                     )
 
                 if format == "flipped":
@@ -416,7 +416,7 @@ def main(
                         outpath.stem + "_flipped" + outpath.suffix
                     )
                 print(f"Saving to {outpath}")
-                if robot_type in ["h1", "g1" , "prestoe_biped"]:
+                if robot_type in ["h1", "g1" , "prestoe_biped", "prestoe"]:
                     torch.save(new_sk_motion, str(outpath))
                 else:
                     new_sk_motion.to_file(str(outpath))

@@ -154,7 +154,7 @@ def prestoe_biped_mapping():
         ["L_ankle_link", "L_Ankle"],
         ["R_hipyaw_link", "R_Hip"],
         ["R_shank_link", "R_Knee"],
-        ["R_ankle_link", "R_Ankle"],
+        ["R_ankle_link", "R_Ankle"]
     ]
 
     smpl_pose_modifier = [
@@ -171,6 +171,55 @@ def prestoe_biped_mapping():
         asset_file=asset_file,
     )
 
+def prestoe_mapping():
+    #### Config for extension
+    extend_config = [
+        {
+            "joint_name": "head",
+            "parent_name": "torso_link",
+            "pos": [0.0, 0.0, 0.5],
+            "rot": [1.0, 0.0, 0.0, 0.0],
+        },        
+        {
+            "joint_name": "L_arm_end_effector",
+            "parent_name": "L_elbowpitch_link",
+            "pos": [0, 0, -0.28],
+            "rot": [1.0, 0.0, 0.0, 0.0],
+        },
+        {
+            "joint_name": "R_arm_end_effector",
+            "parent_name": "R_elbowpitch_link",
+            "pos": [0, 0, -0.28],
+            "rot": [1.0, 0.0, 0.0, 0.0],
+        },
+    ]
+
+    base_link = "torso_link"
+    joint_matches = [
+        ["pelvis", "Pelvis"],
+        ["L_hipyaw_link", "L_Hip"],
+        ["L_shank_link", "L_Knee"],
+        ["L_ankle_link", "L_Ankle"],
+        ["R_hipyaw_link", "R_Hip"],
+        ["R_shank_link", "R_Knee"],
+        ["R_ankle_link", "R_Ankle"],
+        ["R_arm_end_effector", "R_Hand"],
+        ["L_arm_end_effector", "L_Hand"]
+    ]
+
+    smpl_pose_modifier = [
+        {"Pelvis": "[np.pi/2, 0, np.pi/2]"}
+    ]
+
+    asset_file = "protomotions/data/assets/mjcf/prestoe_original.xml"
+
+    return EasyDict(
+        extend_config=extend_config,
+        base_link=base_link,
+        joint_matches=joint_matches,
+        smpl_pose_modifier=smpl_pose_modifier,
+        asset_file=asset_file,
+    )
 
 def h1_no_head_mapping():
     #### Config for extension
@@ -351,5 +400,7 @@ def get_config(humanoid_type: str):
         return g1_mapping()
     elif humanoid_type == "prestoe_biped":
         return prestoe_biped_mapping()
+    elif humanoid_type == "prestoe":
+        return prestoe_mapping()
     else:
         raise NotImplementedError

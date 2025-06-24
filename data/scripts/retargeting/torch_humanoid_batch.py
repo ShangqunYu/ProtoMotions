@@ -135,7 +135,6 @@ class Humanoid_Batch:
             self._proper_kinematic_structure.insert(
                 parent_id + 1, extend_config.joint_name
             )
-
         self.num_bodies = len(self.body_names)
         self.num_bodies_augment = len(self.body_names_augment)
 

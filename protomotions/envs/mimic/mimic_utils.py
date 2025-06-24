@@ -145,7 +145,7 @@ def exp_tracking_reward(
     return rew_dict
 
 
-@torch.jit.script
+# @torch.jit.script
 def dof_to_local(pose: Tensor, dof_offsets: List[int], joint_axis: List[str], w_last: bool) -> Tensor:
     """Convert degrees of freedom (DoF) representation to local rotations.
 
