@@ -43,7 +43,7 @@ def main(
 ):
     if robot_type is None:
         robot_type = humanoid_type
-    elif robot_type in ["h1", "g1", "prestoe_biped", "prestoe"]:
+    elif robot_type in ["h1", "g1", "prestoe_biped", "prestoe", "dash"]:
         assert (
             force_retarget
         ), f"Data is either SMPL or SMPL-X. The {robot_type} robot must use the retargeting pipeline."
@@ -386,7 +386,7 @@ def main(
                 new_sk_motion = SkeletonMotion.from_skeleton_state(
                     new_sk_state, fps=mocap_fr
                 )
-
+                breakpoint()
                 if force_retarget:
                     from data.scripts.retargeting.mink_retarget import (
                         retarget_motion,
@@ -416,7 +416,7 @@ def main(
                         outpath.stem + "_flipped" + outpath.suffix
                     )
                 print(f"Saving to {outpath}")
-                if robot_type in ["h1", "g1" , "prestoe_biped", "prestoe"]:
+                if robot_type in ["h1", "g1" , "prestoe_biped", "prestoe", "dash"]:
                     torch.save(new_sk_motion, str(outpath))
                 else:
                     new_sk_motion.to_file(str(outpath))

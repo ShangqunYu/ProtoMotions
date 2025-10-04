@@ -102,6 +102,26 @@ _PRESTOE_BIPED_KEYPOINT_TO_JOINT = {
     # "R_Shoulder": {"name": "right_shoulder_pitch_link", "weight": 1.0},
 }
 
+
+_DASH_KEYPOINT_TO_JOINT = {
+    # "Pelvis": {"name": "pelvis", "weight": 1.0},
+    "Head": {"name": "head", "weight": 1.0},
+    # Legs.
+    "L_Hip": {"name": "l_hip", "weight": 1.0},
+    "R_Hip": {"name": "r_hip", "weight": 1.0},
+    "L_Knee": {"name": "l_lower_leg", "weight": 1.0},
+    "R_Knee": {"name": "r_lower_leg", "weight": 1.0},
+    "L_Ankle": {"name": "l_foot", "weight": 1.0},
+    "R_Ankle": {"name": "r_foot", "weight": 1.0},
+    # Arms.
+    "L_Elbow": {"name": "l_lower_arm", "weight": 1.0},
+    "R_Elbow": {"name": "r_lower_arm", "weight": 1.0},
+    "L_Wrist": {"name": "L_arm_end_effector", "weight": 1.0},
+    "R_Wrist": {"name": "R_arm_end_effector", "weight": 1.0},
+    "L_Shoulder": {"name": "l_prox_shoulder", "weight": 1.0},
+    "R_Shoulder": {"name": "r_prox_shoulder", "weight": 1.0},
+}
+
 _PRESTOE_KEYPOINT_TO_JOINT = {
     "Pelvis": {"name": "pelvis", "weight": 1.0},
     "Head": {"name": "head", "weight": 1.0},
@@ -126,6 +146,7 @@ _KEYPOINT_TO_JOINT_MAP = {
     "g1": _G1_KEYPOINT_TO_JOINT,
     "prestoe_biped": _PRESTOE_BIPED_KEYPOINT_TO_JOINT,
     "prestoe": _PRESTOE_KEYPOINT_TO_JOINT,
+    "dash": _DASH_KEYPOINT_TO_JOINT,
 }
 
 _RESCALE_FACTOR = {
@@ -133,6 +154,7 @@ _RESCALE_FACTOR = {
     "g1": np.array([0.75, 1.0, 0.8]),
     "prestoe_biped": np.array([0.8, 1.0, 0.9]),
     "prestoe": np.array([0.8, 1.0, 0.9]),
+    "dash": np.array([0.75, 1.0, 0.8]),
 }
 
 _OFFSET = {
@@ -144,6 +166,7 @@ _ROOT_LINK = {
     "g1": "pelvis",
     "prestoe_biped": "torso_link",
     "prestoe": "torso_link",
+    "dash": "torso",
 }
 
 _H1_VELOCITY_LIMITS = {
@@ -261,6 +284,8 @@ def construct_model(robot_name: str, keypoint_names: Sequence[str]):
         humanoid_mjcf = mjcf.from_path("protomotions/data/assets/mjcf/prestoe_biped.xml")
     elif robot_name == "prestoe":
         humanoid_mjcf = mjcf.from_path("protomotions/data/assets/mjcf/prestoe.xml")
+    elif robot_name == "dash":
+        humanoid_mjcf = mjcf.from_path("protomotions/data/assets/mjcf/dash.xml")
     else:
         raise ValueError(f"Unknown robot name: {robot_name}")
     humanoid_mjcf.worldbody.add(
@@ -562,6 +587,8 @@ def retarget_motion(motion: SkeletonMotion, robot_type: str, render: bool = Fals
                 for i, (joint_name, retarget_info) in enumerate(
                     _KEYPOINT_TO_JOINT_MAP[robot_type].items()
                 ):
+                    if joint_name == "R_Elbow":
+                        breakpoint()
                     body_idx = smplx_mujoco_joint_names.index(joint_name)
                     target_pos = global_translations[max(0, t), body_idx, :].copy()
 
@@ -629,7 +656,7 @@ def retarget_motion(motion: SkeletonMotion, robot_type: str, render: bool = Fals
     retargeted_trans = np.stack(retargeted_trans)
 
     # Create skeleton motion
-    if robot_type in ["h1", "g1", "prestoe_biped", "prestoe"]:
+    if robot_type in ["h1", "g1", "prestoe_biped", "prestoe", "dash"]:
         return create_robot_motion(
             retargeted_poses, retargeted_trans, global_translations, fps, robot_type
         )
@@ -758,7 +785,7 @@ def manually_retarget_motion(
     )
     new_sk_motion = SkeletonMotion.from_skeleton_state(new_sk_state, fps=30)
     sk_motion = retarget_motion(new_sk_motion, robot_type, render=render)
-    if robot_type in ["h1", "g1", "prestoe_biped", "prestoe"]:
+    if robot_type in ["h1", "g1", "prestoe_biped", "prestoe", "dash"]:
         torch.save(sk_motion, output_path)
     else:
         sk_motion.to_file(output_path)

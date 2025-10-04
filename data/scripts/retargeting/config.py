@@ -221,6 +221,61 @@ def prestoe_mapping():
         asset_file=asset_file,
     )
 
+
+def dash_mapping():
+    #### Config for extension
+    extend_config = [
+        {
+            "joint_name": "head",
+            "parent_name": "torso",
+            "pos": [0.0, 0.0, 0.5],
+            "rot": [1.0, 0.0, 0.0, 0.0],
+        },        
+        {
+            "joint_name": "L_arm_end_effector",
+            "parent_name": "l_lower_arm",
+            "pos": [0, -0.023, -0.26],
+            "rot": [1.0, 0.0, 0.0, 0.0],
+        },
+        {
+            "joint_name": "R_arm_end_effector",
+            "parent_name": "r_lower_arm",
+            "pos": [0, 0.023, -0.26],
+            "rot": [1.0, 0.0, 0.0, 0.0],
+        },
+    ]
+
+    base_link = "torso"
+    joint_matches = [
+        # ["pelvis", "Pelvis"],
+        ["l_hip", "L_Hip"],
+        ["l_lower_leg", "L_Knee"],
+        ["l_foot", "L_Ankle"],
+        ["r_hip", "R_Hip"],
+        ["r_lower_leg", "R_Knee"],
+        ["r_foot", "R_Ankle"],
+        ["R_arm_end_effector", "R_Hand"],
+        ["L_arm_end_effector", "L_Hand"]
+    ]
+
+    smpl_pose_modifier = [
+        {"L_Shoulder": "[0, 0, -np.pi/2]"},
+        {"R_Shoulder": "[0, 0, np.pi/2]"},
+        {"L_Elbow": "[0, -np.pi/2, 0]"},
+        {"R_Elbow": "[0, np.pi/2, 0]"},
+    ]
+
+    asset_file = "protomotions/data/assets/mjcf/dash.xml"
+
+    return EasyDict(
+        extend_config=extend_config,
+        base_link=base_link,
+        joint_matches=joint_matches,
+        smpl_pose_modifier=smpl_pose_modifier,
+        asset_file=asset_file,
+    )
+
+    
 def h1_no_head_mapping():
     #### Config for extension
     extend_config = [
@@ -402,5 +457,7 @@ def get_config(humanoid_type: str):
         return prestoe_biped_mapping()
     elif humanoid_type == "prestoe":
         return prestoe_mapping()
+    elif humanoid_type == "dash":
+        return dash_mapping()
     else:
         raise NotImplementedError
